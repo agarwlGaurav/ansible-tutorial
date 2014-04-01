@@ -18,22 +18,24 @@
       file: dest={{ webapps_dir }}/{{ app_name }}/log state=directory
 
     - name: deploy code from repository
-      git: repo={{ repo_url }} dest={{ webapps_dir }}/{{ app_name }}/src remote={{ repo_remote }} version={{ repo_version }}
+      git: repo={{ repo_url }} dest={{ webapps_dir }}/{{ app_name }}/src 
+       remote={{ repo_remote }} version={{ repo_version }}
 
     - name: install dependencies into virtualenv
       pip: requirements={{ webapps_dir }}/{{ app_name }}/src/requirements.txt
        virtualenv={{ webapps_dir }}/{{ app_name }}/venv state=present
 
     - name: create supervisor program config
-      template: src=templates/supervisor.ini dest=/etc/supervisor/{{ app_name }}.ini
+      template: src=templates/supervisor.conf dest=/etc/supervisor/supervisor.conf
       notify: restart app
 
     - name: create nginx site config
-      template: src=templates/nginx_site.conf dest=/etc/nginx/sites-available/{{ app_name }}.conf
+      template: src=templates/nginx_site.conf dest=/etc/nginx/sites-available/nginx_site.conf"
       notify: restart nginx
 
     - name: link nginx config
-      file: src=/etc/nginx/sites-available/{{ app_name }}.conf dest=/etc/nginx/sites-enabled/{{ app_name }}.conf state=link
+      file: src=/etc/nginx/sites-available/nginx_site.conf 
+       dest=/etc/nginx/sites-enabled/nginx_site.conf state=link
 
     - name: start app
       supervisorctl: name={{ app_name }} state=started

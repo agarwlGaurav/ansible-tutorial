@@ -9,7 +9,7 @@
       apt_repository: repo=ppa:nginx/stable state=present
 
     - name: install common packages needed for python application development
-      apt: pkg={{ item }} state=installed
+      apt: pkg={{ item }} state=present
       with_items:
         - libpq-dev
         - libmysqlclient-dev
